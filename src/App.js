@@ -6,7 +6,11 @@ import {
 } from "react-router-dom";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+// import './App.css';
+import './assets/Css/SbAdmin.min.css';
+
+// Layouts
+const Main = React.lazy(() => import('./container/Layout/Main/Main'));
 
 // Pages
 const Login = React.lazy(() => import('./components/Pages/Login'));
@@ -19,9 +23,10 @@ function App() {
     <Router>
       <Suspense fallback={<div className="text-center text-muted">Loading...</div>}>
         <Switch>
-          <Route exact path="/" render={props => <Login {...props}/>} />
           <Route exact path="/login" render={props => <Login {...props}/>} />
           <Route exact path="/register" render={props => <Register {...props}/>} />
+          <Route path="/" name="Home" render={props => <Main {...props}/>} />
+
           <Route path="*" component={Page404} />
         </Switch>
       </Suspense>
