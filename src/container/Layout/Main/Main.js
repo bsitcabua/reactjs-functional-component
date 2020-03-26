@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 
 import Sidebar from "../Sidebar/Sidebar";
 import Topbar from "../Topbar/Topbar";
+import Dashboard from "../../../components/Contents/Dashboard/Dashboard";
 
 function Main() {
 
@@ -10,17 +11,18 @@ function Main() {
         <div id="page-top">
             <div id="wrapper">
                 {/* Sidebar */}
-                <Sidebar/>
+                {/* <Sidebar/> */}
                 <div id="content-wrapper" className="d-flex flex-column">
 
-                    <div id="content">
+                    <div id="content" style={{height:710}}>
                     {/* Topbar */}
-                    <Topbar/>
-                        <div className="container-fluid">
+                    {/* <Topbar/> */}
+                        {/* <div className="container-fluid"> */}
 
                             {/* Content */}
+                            <Dashboard/>
 
-                        </div>
+                        {/* </div> */}
 
                     </div>
                 </div>

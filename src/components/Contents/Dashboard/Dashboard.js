@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+
+import {
+  Card, Collapse, CardText, CardBody, CardLink, Button,
+  CardTitle, CardSubtitle
+} from 'reactstrap';
+
+import DashboardSide from './DashboardSide';
 
 function Dashboard() {
 
     return(
+
+      <div className="row m-2">
+        <div className="col-md-4 col-sm-12">
+          <DashboardSide/>
+        </div>
+
+        <div className="col-md-8 col-sm-12">
         <div>
             {/* <!-- Page Heading --> */}
           <div className="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
-            <a href="#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i className="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+            <h1 className="h3 mb-0 text-gray-800">Covid-19 Tracker</h1>
+            <a href="#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i className="fas fa-download fa-sm text-white-50"></i> Reload</a>
           </div>
 
           {/* <!-- Content Row --> */}
@@ -57,7 +71,7 @@ function Dashboard() {
                         </div>
                         <div className="col">
                           <div className="progress progress-sm mr-2">
-                            <div className="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div className="progress-bar bg-info" role="progressbar" style={{ width: 50 }} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                       </div>
@@ -86,8 +100,10 @@ function Dashboard() {
               </div>
             </div>
           </div>
+        </div>
 
         </div>
+      </div>
     )
 }
 
