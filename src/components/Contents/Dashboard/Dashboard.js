@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import axios from "axios";
-
+import GoogleMapReact from 'google-map-react';
 import DashboardSide from './DashboardSide';
 
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
 class Dashboard extends Component {
+
+  static defaultProps = {
+    center: {
+      lat: 59.95,
+      lng: 30.33
+    },
+    zoom: 12
+  };
 
   constructor(props) {
     super(props);
@@ -18,7 +28,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.getNcovData();
-
+    document.title = "Covid-19 Tracker";
     this.interval = setInterval((this.currentDate()), 1000);
   }
 
@@ -217,6 +227,26 @@ class Dashboard extends Component {
             </div>
 
           </div>
+
+          <div className="row">
+            <div className="col-12">
+            {/* // Important! Always set the container height explicitly */}
+            <div style={{ height: '80vh', width: '100%' }}>
+              <GoogleMapReact
+                bootstrapURLKeys={{ key: "AIzaSyCP0uAFAAhv4NFlohZygeYuQKIA0lBlee8" }}
+                defaultCenter={this.props.center}
+                defaultZoom={this.props.zoom}
+              >
+                <AnyReactComponent
+                  lat={59.955413}
+                  lng={30.337844}
+                  // text="Loading..."
+                />
+              </GoogleMapReact>
+            </div>
+            </div>
+          </div>
+
         </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import React from "react";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 
-import Sidebar from "../Sidebar/Sidebar";
-import Topbar from "../Topbar/Topbar";
+// import Sidebar from "../Sidebar/Sidebar";
+// import Topbar from "../Topbar/Topbar";
 import Dashboard from "../../../components/Contents/Dashboard/Dashboard";
 
 function Main() {

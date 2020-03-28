@@ -19,7 +19,7 @@ function DashboardSide(props){
 
     const {covid, toggleAccordion} = props;
     return(
-        <div style={{"overflowY": "scroll", height: window.innerHeight}} >
+        <div style={{"overflowY": "scroll", height: window.innerHeight}} className="mb-5">
         <Card>
             <CardBody>
             <CardTitle><h2 className="text-dark">Tracking Coronavirus <br/>COVID-19</h2></CardTitle>
