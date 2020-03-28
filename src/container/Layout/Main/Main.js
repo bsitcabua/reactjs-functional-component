@@ -14,7 +14,7 @@ function Main() {
                 {/* <Sidebar/> */}
                 <div id="content-wrapper" className="d-flex flex-column">
 
-                    <div id="content" style={{height:710}}>
+                    <div id="content" style={{height: window.innerHeight}}>
                     {/* Topbar */}
                     {/* <Topbar/> */}
                         {/* <div className="container-fluid"> */}
