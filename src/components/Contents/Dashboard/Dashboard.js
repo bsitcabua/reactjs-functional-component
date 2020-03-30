@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, {PropTypes, Component} from 'react';
 import axios from "axios";
 import GoogleMapReact from 'google-map-react';
+
 import DashboardSide from './DashboardSide';
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
@@ -9,10 +10,9 @@ class Dashboard extends Component {
 
   static defaultProps = {
     center: {
-      lat: 59.95,
-      lng: 30.33
-    },
-    zoom: 12
+      lat: 10.31,
+      lng: 123.89
+    }
   };
 
   constructor(props) {
@@ -20,14 +20,18 @@ class Dashboard extends Component {
     this.state = {
         data: null,
         locations: {},
+        location: {},
         collapse: false,
         accordion: [],
         countries: null,
+        zoom: 12
     };
   }
 
   componentDidMount() {
+    this.getLocation();
     this.getNcovData();
+
     document.title = "Covid-19 Tracker";
     this.interval = setInterval((this.currentDate()), 1000);
   }
@@ -36,55 +40,57 @@ class Dashboard extends Component {
     clearInterval(this.interval);
   }
 
+  getLocation = async (ip = '') => {
+    const url = "http://ip-api.com/json/" + ip;
+    
+    try {
+        const res = await axios.get(url);
+        // console.log(res);
+
+        if(res.data.status == "success") {
+          this.setState(
+            {
+              location: res.data,
+            }, function(){
+            // console.log(this.state.location);
+          });
+        }
+
+    } catch (error) {
+      console.log(`😱 Axios request failed: ${error}`);
+    }
+
+  }
+
   getNcovData = async () => {
     const url = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
     try {
         const res = await axios.get(url);
-
         let accordion = [];
+        let uniqueCountries = []; // Unique country holders
+        let tempCountryHolder = {};
 
-        // let newData = [
-        //   {
-        //     id: null,
-        //     country: '',
-        //     country_code: '',
-        //     country_population: 0,
-        //     confirmed: 0,
-        //     deaths: 0,
-        //     recovered: 0,
-        //     country_province: {
-        //       id: null,
-        //       province: null,
-        //       last_updated: null,
-        //       coordinates: {
-        //         latitude: null,
-        //         longitude: null
-        //       },
-        //       latest: {
-        //         confirmed: 0,
-        //         deaths: 0,
-        //         recovered : 0
-        //       }
-        //     }
-        //   }
-        // ];
+        res.data.locations.forEach(function(d) {
+          if (tempCountryHolder.hasOwnProperty(d.country)) {
+            tempCountryHolder[d.country] = tempCountryHolder[d.country] + d.latest.confirmed;
+          } else {
+            tempCountryHolder[d.country] = d.latest.confirmed;
+          }
+        });
+        
+        // Push to uniqueCountries & accordion
+        for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, confirmed: tempCountryHolder[prop] }); accordion.push(false) }
+
+        // Sort by confirmed
+        uniqueCountries.sort(function(a, b){ return b.confirmed-a.confirmed });
 
         // Get unique country
-        let countries = [...new Set(res.data.locations.map(item => item.country))];
-        console.log(res.data.locations);
-
-        // Find value in obj arr
-        // if(countries.find(o => o === res.data.locations.country) != undefined)
-
-        // assign boolean to accordion
-        for(let i = 0; i < countries.length; i++) accordion.push(false); 
-        
+        // let uniqueCountries = [...new Set(tempuniqueCountries.map(item => item.country))];
+        // console.log(uniqueCountries);
         this.setState({
             data: res.data,
             accordion: accordion,
-            countries: countries
-        }, function(){
-            // console.log(this.state);
+            countries: uniqueCountries
         });
 
     } catch (error) {
@@ -100,6 +106,10 @@ class Dashboard extends Component {
     this.setState({
       accordion: state,
     });
+  }
+
+  toggleLocation = (lat, long) => {
+
   }
   
   currentDate = () => {
@@ -145,11 +155,11 @@ class Dashboard extends Component {
     return(
 
       <div className="row m-2">
-        <div className="col-md-5 col-sm-12">
+        <div className="col-md-4 col-sm-12">
           <DashboardSide covid={this.state} toggleAccordion={this.toggleAccordion} />
         </div>
 
-        <div className="col-md-7 col-sm-12">
+        <div className="col-md-8 col-sm-12">
         <div>
             {/* <!-- Page Heading --> */}
           <div className="d-sm-flex align-items-center justify-content-between mb-4">
@@ -235,12 +245,12 @@ class Dashboard extends Component {
               <GoogleMapReact
                 bootstrapURLKeys={{ key: "AIzaSyCP0uAFAAhv4NFlohZygeYuQKIA0lBlee8" }}
                 defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
+                defaultZoom={this.state.zoom}
               >
                 <AnyReactComponent
-                  lat={59.955413}
-                  lng={30.337844}
-                  // text="Loading..."
+                  lat={this.state.location.lat}
+                  lng={this.state.location.lon}
+                  text={this.state.location.city}
                 />
               </GoogleMapReact>
             </div>

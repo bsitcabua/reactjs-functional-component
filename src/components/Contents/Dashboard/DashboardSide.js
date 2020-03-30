@@ -1,10 +1,14 @@
 import React from 'react';
+import { Icon } from 'react-icons-kit';
+import { ic_place } from 'react-icons-kit/md/ic_place';
+import { ic_menu } from 'react-icons-kit/md/ic_menu'
 
 import {
     Card, Collapse, CardText, CardBody, Alert, CardHeader,
-    CardTitle, CardSubtitle, Badge
+    CardTitle, CardSubtitle, Badge, Button
   } from 'reactstrap';
 
+//   Get the total deaths or confirmed
 function getSum(countryKey, keyVal, array){
     let sum = 0;
     for (let index = 0; index < array.length; index++) {
@@ -13,6 +17,40 @@ function getSum(countryKey, keyVal, array){
        }
     }
     return sum;
+}
+
+function getByProvince(country, array) {
+
+    let element = [];
+
+    for (let index = 0; index < array.length; index++) {
+        // console.log(array);
+        // break;\
+        if(array[index].country == country) {
+            element.push(
+                <Alert color="primary" key={index} style={{cursor: "pointer"}}>
+                    <div className="row">
+                        <div className="col-6 text-left">
+                            {/* <p className="m-0 p-0">{ array[index].country ? array[index].country :  array[index].province }</p> */}
+                            <Icon icon={ic_place} />
+                            <p className="m-0 p-0 small">{ array[index].province  ? array[index].province : array[index].country}</p>
+
+                        </div>
+                        <div className="col-3 text-right">
+                            <p className="m-0 p-0 small">Confirmed</p>
+                            <p className="m-0 p-0">{ array[index].latest.confirmed.toLocaleString() }</p>
+                        </div>
+                        <div className="col-3 text-right">
+                            <p className="m-0 p-0 small">Deaths</p>
+                            <p className="m-0 p-0">{ array[index].latest.deaths.toLocaleString() }</p>
+                        </div>
+                    </div>
+                </Alert>
+            )
+        }
+        
+    }
+    return element;
 }
 
 function DashboardSide(props){
@@ -90,48 +128,51 @@ function DashboardSide(props){
                     </Card>
                     )} */}
 
-
+                    
+                    <Card className="mb-0">
+                        <CardHeader>
+                            <div className="row">
+                                <div className="col-6">
+                                    <b className="m-0 p-0">Sort By</b>
+                                </div>
+                                <div className="col-3" title={"Confirmed"}>
+                                    <h6 className="m-0 p-0 float-right">
+                                        <Button color="primary" size="sm"><Icon icon={ic_menu} /></Button>
+                                    </h6>
+                                </div>
+                                <div className="col-3" title={"Deaths"}>
+                                    <h6 className="m-0 p-0 float-right">
+                                    <Button color="danger" size="sm"><Icon icon={ic_menu} /></Button>
+                                    </h6>
+                                </div>
+                            </div>
+                        </CardHeader>
+                    </Card>
+                    <br />
                     {Object.keys(covid.countries).length > 0 && covid.countries.map((location, index) =>
                         <Card className="mb-0" key={index}>
 
                             <CardHeader id="headingOne">
                                 <div onClick={() => toggleAccordion(index)} style={{"cursor": "pointer"}}>
                                     <div className="row">
-                                        <div className="col-4 float-left">
-                                            <h6 className="m-0 p-0">{ location }</h6>
+                                        <div className="col-6">
+                                            <h6 className="m-0 p-0">{ location.country }</h6>
                                         </div>
-                                        <div className="col-4" title={"Confirmed"}>
+                                        <div className="col-3" title={"Confirmed"}>
                                             <h6 className="m-0 p-0 float-right">
-                                                <Badge color="primary" pill>{getSum(location, "confirmed", covid.data.locations).toLocaleString()}</Badge>
+                                                <Badge color="primary" pill>{location.confirmed.toLocaleString()}</Badge>
                                             </h6>
                                         </div>
-                                        <div className="col-4" title={"Deaths"}>
+                                        <div className="col-3" title={"Deaths"}>
                                             <h6 className="m-0 p-0 float-right">
-                                                <Badge color="danger" pill>{getSum(location, "deaths", covid.data.locations).toLocaleString()}</Badge>
+                                                <Badge color="danger" pill>{getSum(location.country, "deaths", covid.data.locations).toLocaleString()}</Badge>
                                             </h6>
                                         </div>
                                     </div>
                                 </div>
                             </CardHeader>
                             <Collapse isOpen={covid.accordion[index]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-                                <div className="m-2">
-                                    <Alert color="primary">
-                                    <div className="row">
-                                        <div className="col-4 text-left">
-                                            <p className="m-0 p-0">{ location }</p>
-                                            {/* <p className="m-0 p-0">{ location.province  ? location.province : location.country}</p> */}
-                                        </div>
-                                        <div className="col-4 text-left">
-                                            <p className="m-0 p-0 ">Confirmed</p>
-                                            {/* <p className="m-0 p-0">{ location.latest.confirmed.toLocaleString() }</p> */}
-                                        </div>
-                                        <div className="col-4 text-left">
-                                            <p className="m-0 p-0 ">Deaths</p>
-                                            {/* <p className="m-0 p-0">{ location.latest.deaths.toLocaleString() }</p> */}
-                                        </div>
-                                    </div>
-                                    </Alert>
-                                </div>
+                                <div className="m-2">{getByProvince(location.country, covid.data.locations)}</div>
                             </Collapse>
 
                         </Card>
