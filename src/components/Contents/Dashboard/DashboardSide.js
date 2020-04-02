@@ -1,7 +1,9 @@
 import React from 'react';
 import { Icon } from 'react-icons-kit';
 import { ic_place } from 'react-icons-kit/md/ic_place';
-import { ic_menu } from 'react-icons-kit/md/ic_menu'
+import { sortAmountDesc } from 'react-icons-kit/fa/sortAmountDesc';
+import { sortAmountAsc } from 'react-icons-kit/fa/sortAmountAsc';
+import { sort } from 'react-icons-kit/fa/sort';
 
 import {
     Card, Collapse, CardText, CardBody, Alert, CardHeader,
@@ -55,7 +57,7 @@ function getByProvince(country, array) {
 
 function DashboardSide(props){
 
-    const {covid, toggleAccordion} = props;
+    const {covid, toggleAccordion, toggleSort} = props;
     return(
         <div style={{"overflowY": "scroll", height: window.innerHeight}} className="mb-5">
         <Card>
@@ -137,12 +139,16 @@ function DashboardSide(props){
                                 </div>
                                 <div className="col-3" title={"Confirmed"}>
                                     <h6 className="m-0 p-0 float-right">
-                                        <Button color="primary" size="sm"><Icon icon={ic_menu} /></Button>
+                                        <Button color="primary" size="sm" onClick={() => toggleSort('confirmed')}>
+                                            <Icon icon={ covid.sortConfirmed === '' ? sort : covid.sortConfirmed === 'desc' ? sortAmountDesc : sortAmountAsc } />
+                                        </Button>
                                     </h6>
                                 </div>
                                 <div className="col-3" title={"Deaths"}>
                                     <h6 className="m-0 p-0 float-right">
-                                    <Button color="danger" size="sm"><Icon icon={ic_menu} /></Button>
+                                    <Button color="danger" size="sm" onClick={() => toggleSort('deaths')}>
+                                        <Icon icon={covid.sortDeaths === '' ? sort : covid.sortDeaths === 'desc' ? sortAmountDesc : sortAmountAsc} />
+                                    </Button>
                                     </h6>
                                 </div>
                             </div>
@@ -160,7 +166,8 @@ function DashboardSide(props){
                                         </div>
                                         <div className="col-3" title={"Confirmed"}>
                                             <h6 className="m-0 p-0 float-right">
-                                                <Badge color="primary" pill>{location.confirmed.toLocaleString()}</Badge>
+                                                {/* <Badge color="primary" pill>{location.confirmed.toLocaleString()}</Badge> */}
+                                                <Badge color="primary" pill>{getSum(location.country, "confirmed", covid.data.locations).toLocaleString()}</Badge>
                                             </h6>
                                         </div>
                                         <div className="col-3" title={"Deaths"}>

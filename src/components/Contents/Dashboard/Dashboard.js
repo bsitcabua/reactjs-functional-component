@@ -24,7 +24,9 @@ class Dashboard extends Component {
         collapse: false,
         accordion: [],
         countries: null,
-        zoom: 12
+        zoom: 12,
+        sortConfirmed: '', // desc or asc
+        sortDeaths: '', // desc or asc
     };
   }
 
@@ -62,37 +64,68 @@ class Dashboard extends Component {
 
   }
 
+
+  sortCovidData = (res = null, sortBy = null) => {
+
+    let accordion = [];
+    let uniqueCountries = []; // Unique country holders
+    let tempCountryHolder = {};
+    let covidData = res ? res.data : this.state.data; // by default get data from api
+
+    covidData.locations.forEach(function(d) {
+      if (tempCountryHolder.hasOwnProperty(d.country)) {
+        if(sortBy === 'deaths')
+          tempCountryHolder[d.country] = tempCountryHolder[d.country] + d.latest.deaths;
+        else
+          tempCountryHolder[d.country] = tempCountryHolder[d.country] + d.latest.confirmed;
+      } else {
+        if(sortBy === 'deaths')
+          tempCountryHolder[d.country] = d.latest.deaths;
+        else
+          tempCountryHolder[d.country] = d.latest.confirmed;
+      }
+    });
+    
+    if(sortBy === 'deaths'){
+       // Push to uniqueCountries & accordion
+       for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, deaths: tempCountryHolder[prop] }); accordion.push(false) }
+       // Sort by deaths asc
+      if(this.state.sortDeaths === 'desc'){
+        uniqueCountries.sort(function(a, b){ return a.deaths-b.deaths });
+      }
+      else{
+        // Sort by deaths desc
+        uniqueCountries.sort(function(a, b){ return b.deaths-a.deaths });
+      }
+    }
+    else{
+      // Push to uniqueCountries & accordion
+      for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, confirmed: tempCountryHolder[prop] }); accordion.push(false) }
+      // Sort by confirmed asc
+      if(this.state.sortConfirmed === 'desc'){
+        uniqueCountries.sort(function(a, b){ return a.confirmed-b.confirmed });
+      }
+      else{
+        // Sort by confirmed desc
+        uniqueCountries.sort(function(a, b){ return b.confirmed-a.confirmed });
+      }
+    }
+
+    // Get unique country
+    // let uniqueCountries = [...new Set(tempuniqueCountries.map(item => item.country))];
+    // console.log(uniqueCountries);
+    this.setState({
+        data: covidData,
+        accordion: accordion,
+        countries: uniqueCountries
+    });
+  }
+
   getNcovData = async () => {
     const url = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
     try {
         const res = await axios.get(url);
-        let accordion = [];
-        let uniqueCountries = []; // Unique country holders
-        let tempCountryHolder = {};
-
-        res.data.locations.forEach(function(d) {
-          if (tempCountryHolder.hasOwnProperty(d.country)) {
-            tempCountryHolder[d.country] = tempCountryHolder[d.country] + d.latest.confirmed;
-          } else {
-            tempCountryHolder[d.country] = d.latest.confirmed;
-          }
-        });
-        
-        // Push to uniqueCountries & accordion
-        for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, confirmed: tempCountryHolder[prop] }); accordion.push(false) }
-
-        // Sort by confirmed
-        uniqueCountries.sort(function(a, b){ return b.confirmed-a.confirmed });
-
-        // Get unique country
-        // let uniqueCountries = [...new Set(tempuniqueCountries.map(item => item.country))];
-        // console.log(uniqueCountries);
-        this.setState({
-            data: res.data,
-            accordion: accordion,
-            countries: uniqueCountries
-        });
-
+        this.sortCovidData(res);
     } catch (error) {
         console.log(`😱 Axios request failed: ${error}`);
     }
@@ -106,6 +139,43 @@ class Dashboard extends Component {
     this.setState({
       accordion: state,
     });
+  }
+
+  toggleSort = (type) => {
+
+    let sortDeaths = '';
+    let sortConfirmed = '';
+
+    if(type === 'deaths'){
+      switch (this.state.sortDeaths) {
+        case '':
+          sortDeaths = 'desc';
+          break;
+        case 'desc':
+          sortDeaths = 'asc';
+          break;
+        default:
+          sortDeaths = 'desc';
+          break;
+      }
+    }
+    else{
+      switch (this.state.sortConfirmed) {
+        case '':
+          sortConfirmed = 'desc';
+          break;
+        case 'desc':
+          sortConfirmed = 'asc';
+          break;
+        default:
+          sortConfirmed = 'desc';
+          break;
+      }
+    }
+
+    this.sortCovidData(null, type);
+
+    this.setState({ sortDeaths, sortConfirmed });
   }
 
   toggleLocation = (lat, long) => {
@@ -156,7 +226,7 @@ class Dashboard extends Component {
 
       <div className="row m-2">
         <div className="col-md-4 col-sm-12">
-          <DashboardSide covid={this.state} toggleAccordion={this.toggleAccordion} />
+          <DashboardSide covid={this.state} toggleAccordion={this.toggleAccordion}  toggleSort={this.toggleSort}/>
         </div>
 
         <div className="col-md-8 col-sm-12">
