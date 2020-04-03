@@ -1,6 +1,8 @@
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
 import axios from "axios";
 import GoogleMapReact from 'google-map-react';
+
+import { Alert } from 'reactstrap';
 
 import DashboardSide from './DashboardSide';
 
@@ -8,25 +10,29 @@ const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Dashboard extends Component {
 
-  static defaultProps = {
-    center: {
-      lat: 10.31,
-      lng: 123.89
-    }
-  };
+  // static defaultProps = {
+  //   center: {
+  //     lat: 10.31,
+  //     lng: 123.89
+  //   }
+  // };
 
   constructor(props) {
     super(props);
     this.state = {
-        data: null,
-        locations: {},
-        location: {},
-        collapse: false,
-        accordion: [],
-        countries: null,
-        zoom: 12,
-        sortConfirmed: '', // desc or asc
-        sortDeaths: '', // desc or asc
+      center: {
+        lat: 10.31,
+        lng: 123.89
+      },
+      data: null,
+      locations: {},
+      location: {},
+      collapse: false,
+      accordion: [],
+      countries: null,
+      zoom: 5,
+      sortConfirmed: '', // desc or asc
+      sortDeaths: '', // desc or asc
     };
   }
 
@@ -125,6 +131,7 @@ class Dashboard extends Component {
     const url = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
     try {
         const res = await axios.get(url);
+        console.table(res);
         this.sortCovidData(res);
     } catch (error) {
         console.log(`😱 Axios request failed: ${error}`);
@@ -177,11 +184,27 @@ class Dashboard extends Component {
 
     this.setState({ sortDeaths, sortConfirmed });
   }
-
-  toggleLocation = (lat, long) => {
-
-  }
   
+  pointLocation = (lat, long, countryCityProvince) => {
+    lat = Number(lat);
+    long = Number(long);
+
+    this.setState({
+      location:{
+        ...this.state.location,
+        lat: lat,
+        lon: long,
+        city: countryCityProvince
+      },
+      center: {
+        lat: lat,
+        lng: long
+      }
+    }, function(){
+
+    });
+  }
+
   currentDate = () => {
       var str = "";
 
@@ -209,6 +232,10 @@ class Dashboard extends Component {
 
   }
 
+  marker = (text) => {
+    return <Alert color="light" className="rounded text-center"><b className="text-danger">{text}</b></Alert>
+  }
+
   render(){
 
     const {data} = this.state;
@@ -226,7 +253,7 @@ class Dashboard extends Component {
 
       <div className="row m-2">
         <div className="col-md-4 col-sm-12">
-          <DashboardSide covid={this.state} toggleAccordion={this.toggleAccordion}  toggleSort={this.toggleSort}/>
+          <DashboardSide covid={this.state} toggleAccordion={this.toggleAccordion}  toggleSort={this.toggleSort} pointLocation={this.pointLocation} />
         </div>
 
         <div className="col-md-8 col-sm-12">
@@ -314,13 +341,13 @@ class Dashboard extends Component {
             <div style={{ height: '80vh', width: '100%' }}>
               <GoogleMapReact
                 bootstrapURLKeys={{ key: "AIzaSyCP0uAFAAhv4NFlohZygeYuQKIA0lBlee8" }}
-                defaultCenter={this.props.center}
-                defaultZoom={this.state.zoom}
+                center={this.state.center}
+                zoom={this.state.zoom}
               >
                 <AnyReactComponent
                   lat={this.state.location.lat}
                   lng={this.state.location.lon}
-                  text={this.state.location.city}
+                  // text={this.marker(this.state.location.city)}
                 />
               </GoogleMapReact>
             </div>

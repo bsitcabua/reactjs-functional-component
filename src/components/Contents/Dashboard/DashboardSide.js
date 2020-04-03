@@ -21,7 +21,7 @@ function getSum(countryKey, keyVal, array){
     return sum;
 }
 
-function getByProvince(country, array) {
+function getByProvince(country, array, pointLocation) {
 
     let element = [];
 
@@ -29,8 +29,12 @@ function getByProvince(country, array) {
         // console.log(array);
         // break;\
         if(array[index].country == country) {
+            let lat = array[index].coordinates.latitude;
+            let long = array[index].coordinates.longitude;
+            let countryCityProvince = array[index].province ? array[index].province : array[index].country;
+    
             element.push(
-                <Alert color="primary" key={index} style={{cursor: "pointer"}}>
+                <Alert color="primary" key={index} style={{cursor: "pointer"}} onClick={() => pointLocation(lat, long, countryCityProvince)}>
                     <div className="row">
                         <div className="col-6 text-left">
                             {/* <p className="m-0 p-0">{ array[index].country ? array[index].country :  array[index].province }</p> */}
@@ -57,7 +61,9 @@ function getByProvince(country, array) {
 
 function DashboardSide(props){
 
-    const {covid, toggleAccordion, toggleSort} = props;
+    const {covid, toggleAccordion, toggleSort, pointLocation} = props;
+
+    // console.log(covid.data);
     return(
         <div style={{"overflowY": "scroll", height: window.innerHeight}} className="mb-5">
         <Card>
@@ -157,7 +163,6 @@ function DashboardSide(props){
                     <br />
                     {Object.keys(covid.countries).length > 0 && covid.countries.map((location, index) =>
                         <Card className="mb-0" key={index}>
-
                             <CardHeader id="headingOne">
                                 <div onClick={() => toggleAccordion(index)} style={{"cursor": "pointer"}}>
                                     <div className="row">
@@ -179,7 +184,7 @@ function DashboardSide(props){
                                 </div>
                             </CardHeader>
                             <Collapse isOpen={covid.accordion[index]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-                                <div className="m-2">{getByProvince(location.country, covid.data.locations)}</div>
+                                <div className="m-2">{getByProvince(location.country, covid.data.locations, pointLocation)}</div>
                             </Collapse>
 
                         </Card>
