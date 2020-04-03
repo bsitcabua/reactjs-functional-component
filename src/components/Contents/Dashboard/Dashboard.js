@@ -59,6 +59,10 @@ class Dashboard extends Component {
           this.setState(
             {
               location: res.data,
+              center: {
+                lat: 10.31,
+                lng: 123.89
+              },
             }, function(){
             // console.log(this.state.location);
           });
