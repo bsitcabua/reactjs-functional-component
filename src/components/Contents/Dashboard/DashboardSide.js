@@ -69,12 +69,11 @@ function DashboardSide(props){
         <Card>
             <CardBody>
             <CardTitle><h2 className="text-dark">Tracking Coronavirus <br/>COVID-19</h2></CardTitle>
-            <br/>
+            {/* <br/>
             <CardSubtitle><strong>PLEASE NOTE:</strong></CardSubtitle>
             <p>
-
                 Due to changing datasets provided by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University, data on recoveries is currently unavailable. Once the recovery data becomes available, we will update this map accordingly.
-            </p>
+            </p> */}
 
             {/* <p>
             The first case of the new Coronavirus COVID-19 was recorded on 31 December in Wuhan, China (WHO). Since then, 467,593 confirmed cases have been recorded worldwide. This visualization shows the near real-time status based on data from the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University and DXY. Data currently available on the following zoom levels: City level - US, Canada and Australia; Province level - China; Country level - other countries. To read more about this map, see How we built an interactive map displaying the COVID-19 outbreak.

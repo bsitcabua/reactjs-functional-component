@@ -30,7 +30,7 @@ class Dashboard extends Component {
       collapse: false,
       accordion: [],
       countries: null,
-      zoom: 5,
+      zoom: 1,
       sortConfirmed: '', // desc or asc
       sortDeaths: '', // desc or asc
     };
@@ -69,7 +69,6 @@ class Dashboard extends Component {
     }
 
   }
-
 
   sortCovidData = (res = null, sortBy = null) => {
 
@@ -131,7 +130,7 @@ class Dashboard extends Component {
     const url = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
     try {
         const res = await axios.get(url);
-        console.table(res);
+        // console.table(res);
         this.sortCovidData(res);
     } catch (error) {
         console.log(`😱 Axios request failed: ${error}`);
@@ -228,6 +227,7 @@ class Dashboard extends Component {
     }, function(){
       // call ncovdata
       this.getNcovData();
+      this.getLocation();
     });
 
   }
