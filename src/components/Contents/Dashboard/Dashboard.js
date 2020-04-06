@@ -1,21 +1,10 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import GoogleMapReact from 'google-map-react';
 
-import { Alert } from 'reactstrap';
-
+import GoogleMap from './../../GoogleMap/GoogleMap';
 import DashboardSide from './DashboardSide';
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
 class Dashboard extends Component {
-
-  // static defaultProps = {
-  //   center: {
-  //     lat: 10.31,
-  //     lng: 123.89
-  //   }
-  // };
 
   constructor(props) {
     super(props);
@@ -25,7 +14,7 @@ class Dashboard extends Component {
         lng: 123.89
       },
       data: null,
-      locations: {},
+      // locations: {},
       location: {},
       collapse: false,
       accordion: [],
@@ -55,7 +44,7 @@ class Dashboard extends Component {
         const res = await axios.get(url);
         // console.log(res);
 
-        if(res.data.status == "success") {
+        if(res.data.status === "success") {
           this.setState(
             {
               location: res.data,
@@ -81,6 +70,8 @@ class Dashboard extends Component {
     let tempCountryHolder = {};
     let covidData = res ? res.data : this.state.data; // by default get data from api
 
+    // console.table(res);
+
     covidData.locations.forEach(function(d) {
       if (tempCountryHolder.hasOwnProperty(d.country)) {
         if(sortBy === 'deaths')
@@ -97,7 +88,7 @@ class Dashboard extends Component {
     
     if(sortBy === 'deaths'){
        // Push to uniqueCountries & accordion
-       for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, deaths: tempCountryHolder[prop] }); accordion.push(false) }
+       for (let prop in tempCountryHolder) { uniqueCountries.push({ country: prop, deaths: tempCountryHolder[prop] }); accordion.push(false) }
        // Sort by deaths asc
       if(this.state.sortDeaths === 'desc'){
         uniqueCountries.sort(function(a, b){ return a.deaths-b.deaths });
@@ -109,7 +100,7 @@ class Dashboard extends Component {
     }
     else{
       // Push to uniqueCountries & accordion
-      for (var prop in tempCountryHolder) { uniqueCountries.push({ country: prop, confirmed: tempCountryHolder[prop] }); accordion.push(false) }
+      for (let prop in tempCountryHolder) { uniqueCountries.push({ country: prop, confirmed: tempCountryHolder[prop] }); accordion.push(false) }
       // Sort by confirmed asc
       if(this.state.sortConfirmed === 'desc'){
         uniqueCountries.sort(function(a, b){ return a.confirmed-b.confirmed });
@@ -127,6 +118,8 @@ class Dashboard extends Component {
         data: covidData,
         accordion: accordion,
         countries: uniqueCountries
+    }, function(){
+      // console.table(this.state.data.locations);
     });
   }
 
@@ -204,18 +197,15 @@ class Dashboard extends Component {
         lng: long
       }
     }, function(){
-
+      // console.log(this.state.center);
     });
   }
 
   currentDate = () => {
-      var str = "";
-
-      var days = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
-      var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-
-      var now = new Date();
-
+      let str = "";
+      let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let now = new Date();
       str += "Today is: " + days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
       // str += "Today is: " + days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() + " " + now.getHours() +":" + now.getMinutes() + ":" + now.getSeconds();
       document.getElementById("todaysDate").innerHTML = str;
@@ -225,7 +215,7 @@ class Dashboard extends Component {
 
     this.setState({
       data: null,
-      locations: {},
+      // locations: {},
       collapse: false,
       accordion: [],
     }, function(){
@@ -234,10 +224,6 @@ class Dashboard extends Component {
       this.getLocation();
     });
 
-  }
-
-  marker = (text) => {
-    return <Alert color="light" className="rounded text-center"><b className="text-danger">{text}</b></Alert>
   }
 
   render(){
@@ -249,7 +235,6 @@ class Dashboard extends Component {
       confirmed = data.latest.confirmed;
       deaths = data.latest.deaths;
       recovered = data.latest.recovered;
-
       deathsPercent = ( (deaths / confirmed) * 100 );
     }
 
@@ -265,7 +250,7 @@ class Dashboard extends Component {
             {/* <!-- Page Heading --> */}
           <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Covid-19 Tracker <span id="todaysDate"></span></h1>
-            <a href="#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.reloadData()}><i className="fas fa-download fa-sm text-white-50"></i> Reload</a>
+            <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onClick={() => this.reloadData()}><i className="fas fa-download fa-sm text-white-50"></i> Reload</button>
           </div>
 
           {/* <!-- Content Row --> */}
@@ -336,31 +321,20 @@ class Dashboard extends Component {
                 </div>
               </div>
             </div>
-
           </div>
-
-          <div className="row">
-            <div className="col-12">
-            {/* // Important! Always set the container height explicitly */}
-            <div style={{ height: '80vh', width: '100%' }}>
-              <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyCP0uAFAAhv4NFlohZygeYuQKIA0lBlee8" }}
-                center={this.state.center}
-                zoom={this.state.zoom}
-              >
-                <AnyReactComponent
-                  lat={this.state.location.lat}
-                  lng={this.state.location.lon}
-                  // text={this.marker(this.state.location.city)}
-                />
-              </GoogleMapReact>
-            </div>
-            </div>
-          </div>
-
-        </div>
+          <GoogleMap 
+            apiKey={"AIzaSyCP0uAFAAhv4NFlohZygeYuQKIA0lBlee8"} 
+            center={this.state.center}
+            zoom={this.state.zoom}
+            lat={this.state.location.lat}
+            lon={this.state.location.lon}
+            city={this.state.location.city}
+            color={"blue"}
+            locations={this.state.data ? this.state.data.locations : {}}
+          />
         </div>
       </div>
+    </div>
     );
   }
 }

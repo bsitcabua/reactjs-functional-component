@@ -7,14 +7,14 @@ import { sort } from 'react-icons-kit/fa/sort';
 
 import {
     Card, Collapse, CardText, CardBody, Alert, CardHeader,
-    CardTitle, CardSubtitle, Badge, Button
+    CardTitle, Badge, Button
   } from 'reactstrap';
 
 //   Get the total deaths or confirmed
 function getSum(countryKey, keyVal, array){
     let sum = 0;
     for (let index = 0; index < array.length; index++) {
-       if(array[index].country == countryKey){
+       if(array[index].country === countryKey){
            sum += array[index].latest[keyVal];
        }
     }
@@ -28,7 +28,7 @@ function getByProvince(country, array, pointLocation) {
     for (let index = 0; index < array.length; index++) {
         // console.log(array);
         // break;\
-        if(array[index].country == country) {
+        if(array[index].country === country) {
             let lat = array[index].coordinates.latitude;
             let long = array[index].coordinates.longitude;
             let countryCityProvince = array[index].province ? array[index].province : array[index].country;
