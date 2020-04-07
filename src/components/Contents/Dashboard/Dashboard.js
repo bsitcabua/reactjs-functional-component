@@ -15,7 +15,10 @@ class Dashboard extends Component {
       },
       data: null,
       // locations: {},
-      location: {},
+      location: {
+        lat: 10.31,
+        lon: 123.89
+      },
       collapse: false,
       accordion: [],
       countries: null,
@@ -26,9 +29,14 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.getLocation();
-    this.getNcovData();
 
+    // Check if geolocation is available
+    if ("geolocation" in navigator) {
+      this.getLocation();
+    }
+
+    this.getNcovData();
+    
     document.title = "Covid-19 Tracker";
     this.interval = setInterval((this.currentDate()), 1000);
   }
@@ -38,24 +46,24 @@ class Dashboard extends Component {
   }
 
   getLocation = async (ip = '') => {
-    const url = "http://ip-api.com/json/" + ip;
+    // const url = "http://ip-api.com/json/" + ip;
     
     try {
-        const res = await axios.get(url);
-        // console.log(res);
-
-        if(res.data.status === "success") {
-          this.setState(
-            {
-              location: res.data,
-              center: {
-                lat: 10.31,
-                lng: 123.89
-              },
-            }, function(){
+    
+      window.navigator.geolocation.getCurrentPosition(
+        position => this.setState({
+            location: {
+              lat: Number(position.coords.latitude),
+              lon: Number(position.coords.longitude)
+            },
+            center: {
+              lat: Number(position.coords.latitude),
+              lng: Number(position.coords.longitude),
+            },
+          },function(){
             // console.log(this.state.location);
-          });
-        }
+          })
+      );
 
     } catch (error) {
       console.log(`😱 Axios request failed: ${error}`);

@@ -5,7 +5,7 @@ import Marker from './Marker';
 
 const GoogleMap = (props) => {
     // loations provide lat and lng data
-    const {center, zoom, apiKey, lat, lon, city, color, locations} = props;
+    const {center, zoom, apiKey, lat, lon, city, color } = props;
     // console.table(locations);
     return(
         
