@@ -38,7 +38,7 @@ class Dashboard extends Component {
   }
 
   getLocation = async (ip = '') => {
-    const url = "http://ip-api.com/json/" + ip;
+    const url = "https://ip-api.com/json/" + ip;
     
     try {
         const res = await axios.get(url);
